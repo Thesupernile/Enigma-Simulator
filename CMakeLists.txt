@@ -4,5 +4,5 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED False)
 
 project(EnigmaSim)
-add_executable(EnigmaSim src/main.cpp)
+add_executable(EnigmaSim src/main.cpp src/enigma.cpp)
 enable_testing()
