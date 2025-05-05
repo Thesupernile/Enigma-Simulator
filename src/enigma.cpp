@@ -150,16 +150,16 @@ namespace Enigma {
             }
 
             // Encrypt through the rotors (right to left)
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingRight);
 
             // Reflect
             character = reflectorEncrypt(character, settings.reflector);
 
             // Encrypt back through the rotors (left to right)
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight);
+            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle);
             character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
 
             // Re-encrypt through the plugboard
