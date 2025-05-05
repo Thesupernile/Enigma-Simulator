@@ -5,7 +5,7 @@
 namespace Enigma {
 
     // DEFINE ROTORS //
-    std::map<char, char> rotor1 = {
+    const std::map<char, char> rotor1 = {
         {'A', 'E'}, {'B', 'K'}, {'C', 'M'}, {'D', 'F'}, {'E', 'L'},
         {'F', 'G'}, {'G', 'D'}, {'H', 'Q'}, {'I', 'V'}, {'J', 'Z'},
         {'K', 'N'}, {'L', 'T'}, {'M', 'O'}, {'N', 'W'}, {'O', 'Y'},
@@ -13,8 +13,9 @@ namespace Enigma {
         {'U', 'A'}, {'V', 'I'}, {'W', 'B'}, {'X', 'R'}, {'Y', 'C'},
         {'Z', 'J'}
     };
+    const int rotor1Turnover = 24;
 
-    std::map<char, char> rotor2 = {
+    const std::map<char, char> rotor2 = {
         {'A', 'A'}, {'B', 'J'}, {'C', 'D'}, {'D', 'K'}, {'E', 'S'}, 
         {'F', 'I'}, {'G', 'R'}, {'H', 'U'}, {'I', 'X'}, {'J', 'B'},
         {'K', 'L'}, {'L', 'H'}, {'M', 'W'}, {'N', 'T'}, {'O', 'M'},
@@ -22,6 +23,7 @@ namespace Enigma {
         {'U', 'P'}, {'V', 'Y'}, {'W', 'F'}, {'X', 'V'}, {'Y', 'O'},
         {'Z', 'E'}
     };
+    const int rotor2Turnover = 12;
 
     std::map<char, char> rotor3 = {
         {'A', 'B'}, {'B', 'D'}, {'C', 'F'}, {'D', 'H'}, {'E', 'J'},
@@ -31,6 +33,7 @@ namespace Enigma {
         {'U', 'K'}, {'V', 'M'}, {'W', 'U'}, {'X', 'S'}, {'Y', 'Q'},
         {'Z', 'O'}
     };
+    const int rotor3Turnover = 3;
 
     std::map<char, char> rotor4 = {
         {'A', 'E'}, {'B', 'S'}, {'C', 'O'}, {'D', 'V'}, {'E', 'P'},
@@ -40,6 +43,7 @@ namespace Enigma {
         {'U', 'K'}, {'V', 'D'}, {'W', 'C'}, {'X', 'M'}, {'Y', 'W'},
         {'Z', 'B'}
     };
+    const int rotor4Turnover = 17;
 
     std::map<char, char> rotor5 = {
         {'A', 'V'}, {'B', 'Z'}, {'C', 'B'}, {'D', 'R'}, {'E', 'G'},
@@ -49,9 +53,7 @@ namespace Enigma {
         {'U', 'Q'}, {'V', 'O'}, {'W', 'F'}, {'X', 'E'}, {'Y', 'C'},
         {'Z', 'K'}
     };
-
-
-
+    const int rotor5Turnover = 7;
 
     // DEFINE REFLECTORS //
     std::map<char, char> ukwB = {
@@ -85,6 +87,14 @@ namespace Enigma {
         int ringSettingMiddle;
         int ringSettingRight;
 
+        int turnoverLeft;
+        int turnoverMiddle;
+        int turnoverRight;
+
+        int positionLeft;
+        int positionMid;
+        int positionRight;
+
         std::vector<std::string> plugboard = {"", "", "", "", "", "", "", "", "", ""};
 
     };
@@ -100,72 +110,80 @@ namespace Enigma {
                 plugboardMap.insert({pairing[1], pairing[0]});
             }
         }
+
+        return plugboardMap;
     }
 
-    std::string rotorEncrypt(std::string plainText, std::map<char, char> rotor, int ringSetting){
+    char rotorEncrypt(char characterToEncrypt, std::map<char, char> rotor, int ringSetting){
         // Institutes the process for rotor encryption in the enigma machine
         std::string ciphertext = "";
+
         // Add in the ring setting offset
+        if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
+            characterToEncrypt = ((characterToEncrypt - 65) + ringSetting) % 26 + 65;
+        }
 
         // Encrypt through the rotor
-        for (char& character : plainText){
-            if(rotor.contains(character)){
-                character = rotor[character];
-            }
-            ciphertext = ciphertext + character;
+        if(rotor.contains(characterToEncrypt)){
+            characterToEncrypt = rotor[characterToEncrypt];
         }
         
-        return ciphertext;
+        return characterToEncrypt;
     }
 
-    std::string reflectorEncrypt(std::string plainText, std::map<char, char> reflector){
+    char reflectorEncrypt(char characterToEncrypt, std::map<char, char> reflector){
         // Institutes the process for the enigma reflector
-        std::string ciphertext = "";
-        for(char& character : plainText){
-            if(reflector.contains(character)){
-                character = reflector[character];
-            }
-            ciphertext = ciphertext + character;
+        if(reflector.contains(characterToEncrypt)){
+            characterToEncrypt = reflector[characterToEncrypt];
         }
-
-        return ciphertext;
+        return characterToEncrypt;
     }
 
     std::string EnigmaEncrypt(std::string plainText, EnigmaSettings settings){
-        std::string cipherText = plainText;
+        std::string cipherText = "";
         std::map<char, char> plugboardMap = generatePlugboard(settings.plugboard);
-        // Encrypt through the plugboard
-        for (int i = 0; i < cipherText.length(); i++){
-            if (plugboardMap.contains(cipherText[i])){
-                cipherText[i] = plugboardMap[cipherText[i]];
+
+        for (char character : plainText){
+            // Encrypt through the plugboard
+            if (plugboardMap.contains(character)){
+                character = plugboardMap[character];
             }
-        }
-        // Encrypt through the rotors (right to left)
-        rotorEncrypt(cipherText, settings.leftRotor, settings.ringSettingLeft);
-        rotorEncrypt(cipherText, settings.midRotor, settings.ringSettingMiddle);
-        rotorEncrypt(cipherText, settings.rightRotor, settings.ringSettingRight);
 
-        // Reflect
-        reflectorEncrypt(cipherText, settings.reflector);
+            // Encrypt through the rotors (right to left)
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
 
-        // Encrypt back through the rotors (left to right)
-        rotorEncrypt(cipherText, settings.rightRotor, settings.ringSettingRight);
-        rotorEncrypt(cipherText, settings.midRotor, settings.ringSettingMiddle);
-        rotorEncrypt(cipherText, settings.leftRotor, settings.ringSettingLeft);
+            // Reflect
+            character = reflectorEncrypt(character, settings.reflector);
 
-        // Re-encrypt through the plugboard
-        for (int i = 0; i < cipherText.length(); i++){
-            if (plugboardMap.contains(cipherText[i])){
-                cipherText[i] = plugboardMap[cipherText[i]];
+            // Encrypt back through the rotors (left to right)
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft);
+
+            // Re-encrypt through the plugboard
+            for (size_t i = 0; i < cipherText.length(); i++){
+                if (plugboardMap.contains(cipherText[i])){
+                    cipherText[i] = plugboardMap[cipherText[i]];
+                }
             }
+
+            cipherText = cipherText + character;
+
+            // Move the rotors by one position
+            settings.positionLeft = (settings.positionLeft + 1) % 26;
+            // Check for turnovers
+            if (settings.positionLeft == settings.turnoverLeft){
+                settings.positionMid = (settings.positionMid + 1) % 26;
+            }
+            if (settings.positionMid == settings.turnoverMiddle){
+                settings.positionMid = (settings.positionMid + 1) % 26;
+                settings.positionRight = (settings.positionRight + 1) % 26;
+            }
+            
         }
 
-        // Move the rotors by one position
-        
-
-        // Check for turnovers
-        
-        
         return cipherText;
     }
 }
