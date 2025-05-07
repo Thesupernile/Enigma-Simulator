@@ -6,9 +6,9 @@ int main(){
     // SETUP //
     Enigma::EnigmaSettings settings;
 
-    settings.leftRotor = Enigma::rotor1;
-    settings.midRotor = Enigma::rotor2;
-    settings.rightRotor = Enigma::rotor3;
+    settings.rightRotor = Enigma::rotor1String;
+    settings.midRotor = Enigma::rotor2String;
+    settings.leftRotor = Enigma::rotor3String;
 
     settings.reflector = Enigma::ukwB;
 
@@ -16,9 +16,9 @@ int main(){
     settings.ringSettingMiddle = 0;
     settings.ringSettingRight = 0;
 
-    settings.turnoverLeft = Enigma::rotor1Turnover;
+    settings.turnoverRight = Enigma::rotor1Turnover;
     settings.turnoverMiddle = Enigma::rotor2Turnover;
-    settings.turnoverRight = Enigma::rotor3Turnover;
+    settings.turnoverLeft = Enigma::rotor3Turnover;
 
     settings.positionLeft = 0;
     settings.positionMid = 0;
@@ -28,11 +28,12 @@ int main(){
 
     // TEST SCRIPT //
 
-    std::cout << "HELLO WORLD\n";
     std::string encryptedText = "HELLO WORLD";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
     std::cout << "iladb bmtbz" << "\n";
+    encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
+    std::cout << encryptedText << "\n";
 
     return 0;
 }
