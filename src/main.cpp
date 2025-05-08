@@ -28,10 +28,10 @@ int main(){
 
     // TEST SCRIPT //
 
-    std::string encryptedText = "HELLO WORLD";
+    std::string encryptedText = "ABCDE FGHIJ KLMNO PQRST UVWXYZ";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
-    std::cout << "iladb bmtbz" << "\n";
+    std::cout << "ILBM QKNGR" << "\n";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
 

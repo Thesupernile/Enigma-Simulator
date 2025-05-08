@@ -9,34 +9,19 @@ namespace Enigma {
 
     // DEFINE ROTORS //
 
-    const std::vector<std::string> rotor1String = {
-        "AE", "BK", "CM", "DF", "EL", "FG", "GD", "HQ", "IV", "JZ", "KN", "LT", "MO", 
-        "NW", "OY", "PH", "QX", "RU", "SS", "TP", "UA", "VI", "WB", "XR", "YC", "ZJ"
-    };
+    const std::string rotor1String = { "AE-BK-CM-DF-EL-FG-GD-HQ-IV-JZ-KN-LT-MO-NW-OY-PH-QX-RU-SS-TP-UA-VI-WB-XR-YC-ZJ" };
     const int rotor1Turnover = 24;
 
-    const std::vector<std::string> rotor2String = {
-        "AA", "BJ", "CD", "DK", "ES", "FI", "GR", "HU", "IX", "JB", "KL", "LH", "MW", 
-        "NT", "OM", "PC", "QQ", "RG", "SZ", "TN", "UP", "VY", "WF", "XV", "YO", "ZE"
-    };
+    const std::string rotor2String = { "AA-BJ-CD-DK-ES-FI-GR-HU-IX-JB-KL-LH-MW-NT-OM-PC-QQ-RG-SZ-TN-UP-VY-WF-XV-YO-ZE" };
     const int rotor2Turnover = 12;
 
-    const std::vector<std::string> rotor3String = {
-        "AB", "BD", "CF", "DH", "EJ", "FL", "GC", "HP", "IR", "JT", "KX", "LV", "MZ", 
-        "NN", "OY", "PE", "QI", "RW", "SG", "TA", "UK", "VM", "WU", "XS", "YQ", "ZO"
-    };
+    const std::string rotor3String = { "AB-BD-CF-DH-EJ-FL-GC-HP-IR-JT-KX-LV-MZ-NN-OY-PE-QI-RW-SG-TA-UK-VM-WU-XS-YQ-ZO" };
     const int rotor3Turnover = 3;
 
-    const std::vector<std::string> rotor4String = {
-        "AE", "BS", "CO", "DV", "EP", "FZ", "GJ", "HA", "IY", "JQ", "KU", "LI", "MR", 
-        "NH", "OX", "PL", "QN", "RF", "ST", "TG", "UK", "VD", "WC", "XM", "YW", "ZB"
-    };
+    const std::string rotor4String = { "AE-BS-CO-DV-EP-FZ-GJ-HA-IY-JQ-KU-LI-MR-NH-OX-PL-QN-RF-ST-TG-UK-VD-WC-XM-YW-ZB" };
     const int rotor4Turnover = 17;
 
-    const std::vector<std::string> rotor5String = {
-        "AV", "BZ", "CB", "DR", "EG", "FI", "GT", "HY", "IU", "JP", "KS", "LD", "MN", 
-        "NH", "OL", "PX", "QA", "RW", "SM", "TJ", "UQ", "VO", "WF", "XE", "YC", "ZK"
-    };
+    const std::string rotor5String = { "AV-BZ-CB-DR-EG-FI-GT-HY-IU-JP-KS-LD-MN-NH-OL-PX-QA-RW-SM-TJ-UQ-VO-WF-XE-YC-ZK" };
     const int rotor5Turnover = 7;
 
     // DEFINE REFLECTORS //
@@ -65,9 +50,9 @@ namespace Enigma {
         /*std::map<char, char> leftRotor;
         std::map<char, char> midRotor;
         std::map<char, char> rightRotor;*/
-        std::vector<std::string> leftRotor;
-        std::vector<std::string> midRotor;
-        std::vector<std::string> rightRotor;
+        std::string leftRotor;
+        std::string midRotor;
+        std::string rightRotor;
 
         std::map<char, char> reflector;
 
@@ -102,25 +87,28 @@ namespace Enigma {
         return plugboardMap;
     }
 
-    char rotorEncrypt(char characterToEncrypt, std::vector<std::string> rotorString , int ringSetting, bool encryptBackwards){
+    char rotorEncrypt(char characterToEncrypt, std::string rotorString, int ringSetting, int position, bool encryptBackwards){
         // Institutes the process for rotor encryption in the enigma machine
         std::string ciphertext = "";
         std::map<char, char> rotor;
 
-        for (size_t i = 0; i < rotorString.size(); i++){
+        for (size_t i = 0; i < rotorString.size(); i += 3){
             if (!encryptBackwards){
-                std::string pairing = rotorString[i];
-                rotor.insert({pairing[0], pairing[1]});
+                rotor.insert({rotorString[i], rotorString[i + 1]});
             }
             else{
-                std::string pairing = rotorString[i];
-                rotor.insert({pairing[1], pairing[0]});                
+                rotor.insert({rotorString[i + 1], rotorString[i]});                
             }
         }
 
         // Add in the ring setting offset
         if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
-            characterToEncrypt = ((characterToEncrypt - 65) + ringSetting) % 26 + 65;
+            if (!encryptBackwards){
+                characterToEncrypt = ((characterToEncrypt - 65) + (ringSetting-position) + 26) % 26 + 65;
+            }
+            else{
+                characterToEncrypt = ((characterToEncrypt - 65) - (ringSetting-position) + 26) % 26 + 65;
+            }
         }
 
         // Encrypt through the rotor
@@ -150,17 +138,17 @@ namespace Enigma {
             }
 
             // Encrypt through the rotors (right to left)
-            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingLeft, false);
-            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, false);
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingRight, false);
+            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, false);
+            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, false);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, false);
 
             // Reflect
             character = reflectorEncrypt(character, settings.reflector);
 
             // Encrypt back through the rotors (left to right)
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingRight, true);
-            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, true);
-            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingLeft, true);
+            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, true);
+            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, true);
+            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, true);
 
             // Re-encrypt through the plugboard
             if (plugboardMap.contains(character)){
@@ -170,7 +158,7 @@ namespace Enigma {
             cipherText = cipherText + character;
 
             // Move the rotors by one position
-            settings.positionRight = (settings.positionRight + 1) % 26;
+            //settings.positionRight = (settings.positionRight + 1) % 26;
             // Check for turnovers
             if (settings.positionRight == settings.turnoverRight){
                 settings.positionMid = (settings.positionMid + 1) % 26;
