@@ -101,19 +101,23 @@ namespace Enigma {
             }
         }
 
-        // Add in the ring setting offset
-        if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
-            if (!encryptBackwards){
-                characterToEncrypt = ((characterToEncrypt - 65) + (ringSetting-position) + 26) % 26 + 65;
-            }
-            else{
-                characterToEncrypt = ((characterToEncrypt - 65) - (ringSetting-position) + 26) % 26 + 65;
+        // Add in the ring setting offset (standard encryption)
+        if (!encryptBackwards){
+            if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
+                characterToEncrypt = ((characterToEncrypt - 65) + (position - ringSetting) + 26) % 26 + 65;
             }
         }
 
         // Encrypt through the rotor
         if(rotor.contains(characterToEncrypt)){
             characterToEncrypt = rotor[characterToEncrypt];
+        }
+
+        // Add in the ring setting offset (reverse encryption)
+        if (encryptBackwards){
+            if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
+                characterToEncrypt = ((characterToEncrypt - 65) - (position - ringSetting) + 26) % 26 + 65;
+            }
         }
         
         return characterToEncrypt;
@@ -130,42 +134,51 @@ namespace Enigma {
     std::string EnigmaEncrypt(std::string plainText, EnigmaSettings settings){
         std::string cipherText = "";
         std::map<char, char> plugboardMap = generatePlugboard(settings.plugboard);
+        int charsEncrypted = 0;
 
         for (char character : plainText){
-            // Encrypt through the plugboard
-            if (plugboardMap.contains(character)){
-                character = plugboardMap[character];
-            }
+            if (character >= 65 && character <= 90){
+                charsEncrypted++;
+                // Encrypt through the plugboard
+                if (plugboardMap.contains(character)){
+                    character = plugboardMap[character];
+                }
 
-            // Encrypt through the rotors (right to left)
-            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, false);
-            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, false);
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, false);
+                // Encrypt through the rotors (right to left)
+                character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, false);
+                character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, false);
+                character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, false);
 
-            // Reflect
-            character = reflectorEncrypt(character, settings.reflector);
+                // Reflect
+                character = reflectorEncrypt(character, settings.reflector);
 
-            // Encrypt back through the rotors (left to right)
-            character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, true);
-            character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, true);
-            character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, true);
+                // Encrypt back through the rotors (left to right)
+                character = rotorEncrypt(character, settings.leftRotor, settings.ringSettingLeft, settings.positionLeft, true);
+                character = rotorEncrypt(character, settings.midRotor, settings.ringSettingMiddle, settings.positionMid, true);
+                character = rotorEncrypt(character, settings.rightRotor, settings.ringSettingRight, settings.positionRight, true);
 
-            // Re-encrypt through the plugboard
-            if (plugboardMap.contains(character)){
-                character = plugboardMap[character];
-            }
+                // Re-encrypt through the plugboard
+                if (plugboardMap.contains(character)){
+                    character = plugboardMap[character];
+                }
 
-            cipherText = cipherText + character;
+                cipherText = cipherText + character;
 
-            // Move the rotors by one position
-            //settings.positionRight = (settings.positionRight + 1) % 26;
-            // Check for turnovers
-            if (settings.positionRight == settings.turnoverRight){
-                settings.positionMid = (settings.positionMid + 1) % 26;
-            }
-            if (settings.positionMid == settings.turnoverMiddle){
-                settings.positionMid = (settings.positionMid + 1) % 26;
-                settings.positionLeft = (settings.positionLeft + 1) % 26;
+                // Move the rotors by one position
+                settings.positionRight = (settings.positionRight + 1) % 26;
+                // Check for turnovers
+                if (settings.positionRight == settings.turnoverRight){
+                    settings.positionMid = (settings.positionMid + 1) % 26;
+                }
+                if (settings.positionMid == settings.turnoverMiddle){
+                    settings.positionMid = (settings.positionMid + 1) % 26;
+                    settings.positionLeft = (settings.positionLeft + 1) % 26;
+                }
+
+                // Enigma messages were encrypted in the format XXXXX XXXXX XXXXX XXXXX so we add a space after every fifth character
+                if (charsEncrypted % 5 == 0){
+                    cipherText += " ";
+                }
             }
         }
 

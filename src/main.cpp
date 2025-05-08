@@ -28,7 +28,7 @@ int main(){
 
     // TEST SCRIPT //
 
-    std::string encryptedText = "ABCDE FGHIJ KLMNO PQRST UVWXYZ";
+    std::string encryptedText = "HELLO WORLD";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
     std::cout << "ILBM QKNGR" << "\n";
