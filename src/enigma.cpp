@@ -9,19 +9,19 @@ namespace Enigma {
 
     // DEFINE ROTORS //
 
-    const std::string rotor1String = { "AE-BK-CM-DF-EL-FG-GD-HQ-IV-JZ-KN-LT-MO-NW-OY-PH-QX-RU-SS-TP-UA-VI-WB-XR-YC-ZJ" };
+    const std::string rotor1 = { "AE-BK-CM-DF-EL-FG-GD-HQ-IV-JZ-KN-LT-MO-NW-OY-PH-QX-RU-SS-TP-UA-VI-WB-XR-YC-ZJ" };
     const int rotor1Turnover = 16;
 
-    const std::string rotor2String = { "AA-BJ-CD-DK-ES-FI-GR-HU-IX-JB-KL-LH-MW-NT-OM-PC-QQ-RG-SZ-TN-UP-VY-WF-XV-YO-ZE" };
+    const std::string rotor2 = { "AA-BJ-CD-DK-ES-FI-GR-HU-IX-JB-KL-LH-MW-NT-OM-PC-QQ-RG-SZ-TN-UP-VY-WF-XV-YO-ZE" };
     const int rotor2Turnover = 4;
 
-    const std::string rotor3String = { "AB-BD-CF-DH-EJ-FL-GC-HP-IR-JT-KX-LV-MZ-NN-OY-PE-QI-RW-SG-TA-UK-VM-WU-XS-YQ-ZO" };
-    const int rotor3Turnover = 22;
+    const std::string rotor3 = { "AB-BD-CF-DH-EJ-FL-GC-HP-IR-JT-KX-LV-MZ-NN-OY-PE-QI-RW-SG-TA-UK-VM-WU-XS-YQ-ZO" };
+    const int rotor3Turnover = 21;
 
-    const std::string rotor4String = { "AE-BS-CO-DV-EP-FZ-GJ-HA-IY-JQ-KU-LI-MR-NH-OX-PL-QN-RF-ST-TG-UK-VD-WC-XM-YW-ZB" };
+    const std::string rotor4 = { "AE-BS-CO-DV-EP-FZ-GJ-HA-IY-JQ-KU-LI-MR-NH-OX-PL-QN-RF-ST-TG-UK-VD-WC-XM-YW-ZB" };
     const int rotor4Turnover = 9;
 
-    const std::string rotor5String = { "AV-BZ-CB-DR-EG-FI-GT-HY-IU-JP-KS-LD-MN-NH-OL-PX-QA-RW-SM-TJ-UQ-VO-WF-XE-YC-ZK" };
+    const std::string rotor5 = { "AV-BZ-CB-DR-EG-FI-GT-HY-IU-JP-KS-LD-MN-NH-OL-PX-QA-RW-SM-TJ-UQ-VO-WF-XE-YC-ZK" };
     const int rotor5Turnover = 25;
 
     // DEFINE REFLECTORS //
@@ -50,38 +50,36 @@ namespace Enigma {
         /*std::map<char, char> leftRotor;
         std::map<char, char> midRotor;
         std::map<char, char> rightRotor;*/
-        std::string leftRotor;
-        std::string midRotor;
-        std::string rightRotor;
+        std::string leftRotor = rotor1;
+        std::string midRotor = rotor2;
+        std::string rightRotor = rotor3;
 
-        std::map<char, char> reflector;
+        int turnoverLeft = rotor1Turnover;
+        int turnoverMiddle = rotor2Turnover;
+        int turnoverRight = rotor3Turnover;
 
-        int ringSettingLeft;
-        int ringSettingMiddle;
-        int ringSettingRight;
+        std::map<char, char> reflector = ukwB;
 
-        int turnoverLeft;
-        int turnoverMiddle;
-        int turnoverRight;
+        int ringSettingLeft = 0;
+        int ringSettingMiddle = 0;
+        int ringSettingRight = 0;
 
-        int positionLeft;
-        int positionMid;
-        int positionRight;
+        int positionLeft = 0;
+        int positionMid = 0;
+        int positionRight = 0;
 
-        std::vector<std::string> plugboard = {"", "", "", "", "", "", "", "", "", ""};
+        std::string plugboard = "";
 
     };
 
     // ENIGMA PROCESSING //
 
-    std::map<char, char> generatePlugboard(std::vector<std::string> plugboardSettings) {
+    std::map<char, char> generatePlugboard(std::string plugboardSettings) {
         std::map<char, char> plugboardMap;
 
-        for (std::string& pairing : plugboardSettings){
-            if (pairing.length() == 2){
-                plugboardMap.insert({pairing[0], pairing[1]});
-                plugboardMap.insert({pairing[1], pairing[0]});
-            }
+        for (int i = 1; i < plugboardSettings.size(); i += 3){
+            plugboardMap.insert({plugboardSettings[i-1], plugboardSettings[i]});
+            plugboardMap.insert({plugboardSettings[i], plugboardSettings[i-1]});
         }
 
         return plugboardMap;
@@ -131,8 +129,6 @@ namespace Enigma {
         for (char character : plainText){
             if (character >= 65 && character <= 90){
                 charsEncrypted++;
-                // Move the rotors by one position (enigma moved rotors before encrypting)
-                settings.positionRight = (settings.positionRight + 1) % 26;
                 // Check for turnovers
                 if (settings.positionRight == settings.turnoverRight){
                     settings.positionMid = (settings.positionMid + 1) % 26;
@@ -141,6 +137,8 @@ namespace Enigma {
                     settings.positionMid = (settings.positionMid + 1) % 26;
                     settings.positionLeft = (settings.positionLeft + 1) % 26;
                 }
+                // Move the rotors by one position (enigma moved rotors before encrypting)
+                settings.positionRight = (settings.positionRight + 1) % 26;
 
                 // Encrypt through the plugboard
                 if (plugboardMap.contains(character)){
