@@ -10,19 +10,19 @@ namespace Enigma {
     // DEFINE ROTORS //
 
     const std::string rotor1String = { "AE-BK-CM-DF-EL-FG-GD-HQ-IV-JZ-KN-LT-MO-NW-OY-PH-QX-RU-SS-TP-UA-VI-WB-XR-YC-ZJ" };
-    const int rotor1Turnover = 18;
+    const int rotor1Turnover = 16;
 
     const std::string rotor2String = { "AA-BJ-CD-DK-ES-FI-GR-HU-IX-JB-KL-LH-MW-NT-OM-PC-QQ-RG-SZ-TN-UP-VY-WF-XV-YO-ZE" };
-    const int rotor2Turnover = 6;
+    const int rotor2Turnover = 4;
 
     const std::string rotor3String = { "AB-BD-CF-DH-EJ-FL-GC-HP-IR-JT-KX-LV-MZ-NN-OY-PE-QI-RW-SG-TA-UK-VM-WU-XS-YQ-ZO" };
-    const int rotor3Turnover = 23;
+    const int rotor3Turnover = 22;
 
     const std::string rotor4String = { "AE-BS-CO-DV-EP-FZ-GJ-HA-IY-JQ-KU-LI-MR-NH-OX-PL-QN-RF-ST-TG-UK-VD-WC-XM-YW-ZB" };
-    const int rotor4Turnover = 11;
+    const int rotor4Turnover = 9;
 
     const std::string rotor5String = { "AV-BZ-CB-DR-EG-FI-GT-HY-IU-JP-KS-LD-MN-NH-OL-PX-QA-RW-SM-TJ-UQ-VO-WF-XE-YC-ZK" };
-    const int rotor5Turnover = 1;
+    const int rotor5Turnover = 25;
 
     // DEFINE REFLECTORS //
 
@@ -101,24 +101,16 @@ namespace Enigma {
             }
         }
 
-        // Add in the ring setting offset (standard encryption)
-        if (!encryptBackwards){
-            if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
-                characterToEncrypt = ((characterToEncrypt - 65) + (position - ringSetting) + 26) % 26 + 65;
-            }
-        }
+        // Add in the ring setting offset into this rotor
+        characterToEncrypt = ((characterToEncrypt - 65) + 52 + (position - ringSetting)) % 26 + 65;
 
         // Encrypt through the rotor
         if(rotor.contains(characterToEncrypt)){
             characterToEncrypt = rotor[characterToEncrypt];
         }
 
-        // Add in the ring setting offset (reverse encryption)
-        if (encryptBackwards){
-            if (characterToEncrypt >= 65 && characterToEncrypt <= 90){
-                characterToEncrypt = ((characterToEncrypt - 65) - (position - ringSetting) + 26) % 26 + 65;
-            }
-        }
+        // Add in the ring setting offset to go to the next rotor
+        characterToEncrypt = ((characterToEncrypt - 65) + 52 - (position - ringSetting)) % 26 + 65;
         
         return characterToEncrypt;
     }
@@ -145,7 +137,7 @@ namespace Enigma {
                 if (settings.positionRight == settings.turnoverRight){
                     settings.positionMid = (settings.positionMid + 1) % 26;
                 }
-                if (settings.positionMid == settings.turnoverMiddle){
+                else if (settings.positionMid == settings.turnoverMiddle){
                     settings.positionMid = (settings.positionMid + 1) % 26;
                     settings.positionLeft = (settings.positionLeft + 1) % 26;
                 }

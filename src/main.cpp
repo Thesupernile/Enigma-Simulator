@@ -12,26 +12,26 @@ int main(){
 
     settings.reflector = Enigma::ukwB;
 
-    settings.ringSettingLeft = 0;
-    settings.ringSettingMiddle = 0;
-    settings.ringSettingRight = 0;
+    settings.ringSettingLeft = 10;
+    settings.ringSettingMiddle = 4;
+    settings.ringSettingRight = 23;
 
-    settings.turnoverRight = Enigma::rotor1Turnover;
+    settings.turnoverLeft = Enigma::rotor1Turnover;
     settings.turnoverMiddle = Enigma::rotor2Turnover;
-    settings.turnoverLeft = Enigma::rotor3Turnover;
+    settings.turnoverRight = Enigma::rotor3Turnover;
 
-    settings.positionLeft = 0;
-    settings.positionMid = 0;
-    settings.positionRight = 0;
+    settings.positionLeft = 7;
+    settings.positionMid = 18;
+    settings.positionRight = 16;
 
-    settings.plugboard = {"", "", "", "", "", "", "", "", "", ""};
+    settings.plugboard = {"BE", "JF", "UP", "SQ", "TL", "GM", "YZ", "OC", "RD", "IX"};
 
     // TEST SCRIPT //
 
-    std::string encryptedText = "HELLO WORLD";
+    std::string encryptedText = "THIS IS A DEFAULT TEST MESSAGE I CAME UP WITH TO DETERMINE IF MY ENIGMA MACHINE WORKED CORRECTLY WITH ROTOR TURNOVERS OR IF I WAS BEING VERY SILLY";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
-    std::cout << "ILBDA AMTAZ" << "\n";
+    std::cout << "RXNWP KTKUI KHXKS XLPWC LZZUO BTOVH GJBWF QINCF FDLBB UHFOF IIYBK DITFL XBKUL VGMOS ZRYJR NFXVB EKVIM WIGJZ VRXJJ JYQMC NKVFA PLYHW PUQRX MENN" << "\n";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
 
