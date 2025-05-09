@@ -6,9 +6,9 @@ int main(){
     // SETUP //
     Enigma::EnigmaSettings settings;
 
-    settings.rightRotor = Enigma::rotor1String;
+    settings.leftRotor = Enigma::rotor1String;
     settings.midRotor = Enigma::rotor2String;
-    settings.leftRotor = Enigma::rotor3String;
+    settings.rightRotor = Enigma::rotor3String;
 
     settings.reflector = Enigma::ukwB;
 
@@ -31,9 +31,11 @@ int main(){
     std::string encryptedText = "HELLO WORLD";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
-    std::cout << "ILBM QKNGR" << "\n";
+    std::cout << "ILBDA AMTAZ" << "\n";
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
     std::cout << encryptedText << "\n";
 
     return 0;
 }
+
+// AMTAZ (Just a cool sounding name to consider in the future)

@@ -10,19 +10,19 @@ namespace Enigma {
     // DEFINE ROTORS //
 
     const std::string rotor1String = { "AE-BK-CM-DF-EL-FG-GD-HQ-IV-JZ-KN-LT-MO-NW-OY-PH-QX-RU-SS-TP-UA-VI-WB-XR-YC-ZJ" };
-    const int rotor1Turnover = 24;
+    const int rotor1Turnover = 18;
 
     const std::string rotor2String = { "AA-BJ-CD-DK-ES-FI-GR-HU-IX-JB-KL-LH-MW-NT-OM-PC-QQ-RG-SZ-TN-UP-VY-WF-XV-YO-ZE" };
-    const int rotor2Turnover = 12;
+    const int rotor2Turnover = 6;
 
     const std::string rotor3String = { "AB-BD-CF-DH-EJ-FL-GC-HP-IR-JT-KX-LV-MZ-NN-OY-PE-QI-RW-SG-TA-UK-VM-WU-XS-YQ-ZO" };
-    const int rotor3Turnover = 3;
+    const int rotor3Turnover = 23;
 
     const std::string rotor4String = { "AE-BS-CO-DV-EP-FZ-GJ-HA-IY-JQ-KU-LI-MR-NH-OX-PL-QN-RF-ST-TG-UK-VD-WC-XM-YW-ZB" };
-    const int rotor4Turnover = 17;
+    const int rotor4Turnover = 11;
 
     const std::string rotor5String = { "AV-BZ-CB-DR-EG-FI-GT-HY-IU-JP-KS-LD-MN-NH-OL-PX-QA-RW-SM-TJ-UQ-VO-WF-XE-YC-ZK" };
-    const int rotor5Turnover = 7;
+    const int rotor5Turnover = 1;
 
     // DEFINE REFLECTORS //
 
@@ -139,6 +139,17 @@ namespace Enigma {
         for (char character : plainText){
             if (character >= 65 && character <= 90){
                 charsEncrypted++;
+                // Move the rotors by one position (enigma moved rotors before encrypting)
+                settings.positionRight = (settings.positionRight + 1) % 26;
+                // Check for turnovers
+                if (settings.positionRight == settings.turnoverRight){
+                    settings.positionMid = (settings.positionMid + 1) % 26;
+                }
+                if (settings.positionMid == settings.turnoverMiddle){
+                    settings.positionMid = (settings.positionMid + 1) % 26;
+                    settings.positionLeft = (settings.positionLeft + 1) % 26;
+                }
+
                 // Encrypt through the plugboard
                 if (plugboardMap.contains(character)){
                     character = plugboardMap[character];
@@ -163,17 +174,6 @@ namespace Enigma {
                 }
 
                 cipherText = cipherText + character;
-
-                // Move the rotors by one position
-                settings.positionRight = (settings.positionRight + 1) % 26;
-                // Check for turnovers
-                if (settings.positionRight == settings.turnoverRight){
-                    settings.positionMid = (settings.positionMid + 1) % 26;
-                }
-                if (settings.positionMid == settings.turnoverMiddle){
-                    settings.positionMid = (settings.positionMid + 1) % 26;
-                    settings.positionLeft = (settings.positionLeft + 1) % 26;
-                }
 
                 // Enigma messages were encrypted in the format XXXXX XXXXX XXXXX XXXXX so we add a space after every fifth character
                 if (charsEncrypted % 5 == 0){
