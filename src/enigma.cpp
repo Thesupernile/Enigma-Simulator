@@ -77,7 +77,7 @@ namespace Enigma {
     std::map<char, char> generatePlugboard(std::string plugboardSettings) {
         std::map<char, char> plugboardMap;
 
-        for (int i = 1; i < plugboardSettings.size(); i += 3){
+        for (size_t i = 1; i < plugboardSettings.size(); i += 3){
             plugboardMap.insert({plugboardSettings[i-1], plugboardSettings[i]});
             plugboardMap.insert({plugboardSettings[i], plugboardSettings[i-1]});
         }
