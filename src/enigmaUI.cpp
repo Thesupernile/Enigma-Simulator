@@ -95,7 +95,7 @@ namespace EnigmaUI{
         while (!settingsConfirmed){
             std::cout << "\n<---------------------------------->\n";
             std::cout << "Current Settings:\n\n";
-            std::cout << "1) Rotors: " << rotorLeft << " " << rotorMid << " " << rotorRight << "\n";
+            std::cout << "1) Rotors: " << rotorLeft << ", " << rotorMid << ", " << rotorRight << "\n";
             std::cout << "2) Reflector: " << reflector << "\n";
             std::cout << "3) Ring Settings: " << settings.ringSettingLeft << ", " << settings.ringSettingMiddle << ", " << settings.ringSettingRight << "\n";
             std::cout << "4) Plugboard Pairings: " << settings.plugboard << "\n";
@@ -191,7 +191,6 @@ namespace EnigmaUI{
                     settings.ringSettingRight = takeIntInput() % 26;
                 }
                 else if (userResponse == "4"){
-                    bool plugboardDecided = false;
                     settings.plugboard = "";
                     std::cout << "Plugboard Cleared \n";
 
@@ -216,11 +215,13 @@ namespace EnigmaUI{
                                         }
                                     }
                                 }
-                                settings.plugboard = settings.plugboard + pairing[0] + pairing[1] + "-";
+                                if (validPairing){
+                                    settings.plugboard = settings.plugboard + pairing[0] + pairing[1] + "-";
+                                }
                             }
                         }
                         if (pairing == "EXIT" || settings.plugboard.length() >= 30){
-                            plugboardDecided = true;
+                            pairing = "EXIT";
                             std::cout << "Exiting plugboard interface...\n";
                         }
                     }
@@ -241,7 +242,7 @@ namespace EnigmaUI{
                 settings.positionLeft = userResponse[0] - 65;
                 settings.positionMid = userResponse[1] - 65;
                 settings.positionRight = userResponse[2] - 65;
-                std::cout << "Input Accepted \n\n <---------------------------------->\n";
+                std::cout << "Input Accepted \n\n<---------------------------------->\n";
                 validPasscodeEntered = true;
             }
             else{
