@@ -91,6 +91,7 @@ namespace EnigmaUI{
         std::string reflector = "ukw B";
         std::string userResponse;
         bool settingsConfirmed = false;
+        bool autoFormat = true;
 
         while (!settingsConfirmed){
             std::cout << "\n<---------------------------------->\n";
@@ -99,6 +100,7 @@ namespace EnigmaUI{
             std::cout << "2) Reflector: " << reflector << "\n";
             std::cout << "3) Ring Settings: " << settings.ringSettingLeft << ", " << settings.ringSettingMiddle << ", " << settings.ringSettingRight << "\n";
             std::cout << "4) Plugboard Pairings: " << settings.plugboard << "\n";
+            std::cout << "5) Auto Formatting: " << autoFormat << "\n";
             std::cout << "<---------------------------------->\n";
 
             std::cout << "Would you like to change the enigma setup? Y/N\n";
@@ -109,7 +111,7 @@ namespace EnigmaUI{
                 settingsConfirmed = true;
             }
             else{
-                std::cout << "Which setting would you like to change (1-4)? ";
+                std::cout << "Which setting would you like to change (1-5)? ";
                 std::cin >> userResponse;
                 if (userResponse == "1"){
                     std::string newRotor1;
@@ -226,6 +228,17 @@ namespace EnigmaUI{
                         }
                     }
                 }
+                else if (userResponse == "5"){
+                    std::cout << "Would you like to auto format the output in the format XXXX XXXXX XXXXX? (Y/N): ";
+                    std::cin >> userResponse;
+                    userResponse = convertToUpper(userResponse);
+                    if (userResponse == "Y"){
+                        autoFormat = true;
+                    }
+                    else if (userResponse == "N"){
+                        autoFormat = false;
+                    }
+                }
                 else{
                     std::cout << "Unrecognised Input";
                 }
@@ -246,7 +259,8 @@ namespace EnigmaUI{
                 validPasscodeEntered = true;
             }
             else{
-                std::cout << "Unrecognised Input...\n";
+                std::cout << "Unrecognised Input\n";
+                std::cout << "Please enter a message passcode in the format XXX (eg. ADT, IHP or QXR)";
             }
         }
 
