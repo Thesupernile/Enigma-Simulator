@@ -57,6 +57,20 @@ namespace EnigmaUI{
         }
     }
 
+    void EnigmaWelcome(){
+        std::string userResponse;
+        std::cout << "Welcome to the enigma machine simulator, would you like to see the instructions? (Y/N)";
+        std::cin >> userResponse;
+        userResponse = convertToUpper(userResponse);
+        if (userResponse == "Y"){
+            std::cout << "To use the enigma machine, you first need to set up the machine. This means chosing which rotors ";
+            std::cout << "you want to use, what ring setting they are on, what reflector you are using and how to set up the ";
+            std::cout << "plugboard. Each message also needs a three letter passcode, which the program will ask for at the ";
+            std::cout << "start of the decryption process. All of these elements must be known to decrypt the message that you ";
+            std::cout << "encrypt using the machine. To decrypt, simply set the machine up exactly as it was when you encrypted the ";
+            std::cout << "message and enter the encrypted message. This will recover the message so the intended recipient can read it. \n";
+        }
+    }
 
     Enigma::EnigmaSettings getSettings(){
         Enigma::EnigmaSettings settings;
@@ -91,7 +105,6 @@ namespace EnigmaUI{
         std::string reflector = "ukw B";
         std::string userResponse;
         bool settingsConfirmed = false;
-        bool autoFormat = true;
 
         while (!settingsConfirmed){
             std::cout << "\n<---------------------------------->\n";
@@ -100,7 +113,8 @@ namespace EnigmaUI{
             std::cout << "2) Reflector: " << reflector << "\n";
             std::cout << "3) Ring Settings: " << settings.ringSettingLeft << ", " << settings.ringSettingMiddle << ", " << settings.ringSettingRight << "\n";
             std::cout << "4) Plugboard Pairings: " << settings.plugboard << "\n";
-            std::cout << "5) Auto Formatting: " << autoFormat << "\n";
+            if (settings.autoFormat){ std::cout << "5) Auto Formatting: Enabled \n"; }
+            else { std::cout << "5) Auto Formatting: Disabled \n"; }
             std::cout << "<---------------------------------->\n";
 
             std::cout << "Would you like to change the enigma setup? Y/N\n";
@@ -233,10 +247,10 @@ namespace EnigmaUI{
                     std::cin >> userResponse;
                     userResponse = convertToUpper(userResponse);
                     if (userResponse == "Y"){
-                        autoFormat = true;
+                        settings.autoFormat = true;
                     }
                     else if (userResponse == "N"){
-                        autoFormat = false;
+                        settings.autoFormat = false;
                     }
                 }
                 else{
@@ -270,7 +284,7 @@ namespace EnigmaUI{
     std::string getTextToEncrypt(){
         std::string inputText;
 
-        std::cout << "Please enter the text you would like to encypt/decypt: \n";
+        std::cout << "Please enter the text you would like to encypt or decypt: \n";
         getline(std::cin >> std::ws, inputText);
         inputText = convertToUpper(inputText);
 

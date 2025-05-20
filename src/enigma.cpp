@@ -68,6 +68,8 @@ namespace Enigma {
         int positionMid = 0;
         int positionRight = 0;
 
+        bool autoFormat = true;
+
         std::string plugboard = "";
 
     };
@@ -166,9 +168,12 @@ namespace Enigma {
                 cipherText = cipherText + character;
 
                 // Enigma messages were encrypted in the format XXXXX XXXXX XXXXX XXXXX so we add a space after every fifth character
-                if (charsEncrypted % 5 == 0){
+                if (charsEncrypted % 5 == 0 && settings.autoFormat == true){
                     cipherText += " ";
                 }
+            }
+            else if (settings.autoFormat == false && character == ' '){
+                cipherText = cipherText + character;
             }
         }
 

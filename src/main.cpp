@@ -4,9 +4,8 @@
 
 int main(){
     // SETUP //
+    EnigmaUI::EnigmaWelcome();
     Enigma::EnigmaSettings settings = EnigmaUI::getSettings();
-
-    // TEST SCRIPT //
 
     std::string encryptedText = EnigmaUI::getTextToEncrypt();
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
