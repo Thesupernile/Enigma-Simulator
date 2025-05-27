@@ -9,7 +9,9 @@ int main(){
 
     std::string encryptedText = EnigmaUI::getTextToEncrypt();
     encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
-    std::cout << encryptedText << "\n";
+    std::cout << "Your encrypted message is: \n" << encryptedText << "\n";
+    std::cout << "Type anything then press enter to exit the program\n";
+    std::cin >> encryptedText;
 
     return 0;
 }
