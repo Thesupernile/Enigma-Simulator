@@ -61,7 +61,6 @@ Settings Menu:
 
 ![Settings Display Menu Screenshot](ProgramScreenshots/CurrentSettingsDisplay.png)
 
-
 Changing the reflector:
 
 ![Reflector Changes Screenshot](ProgramScreenshots/ChangingReflector.png)

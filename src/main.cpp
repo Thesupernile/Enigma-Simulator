@@ -4,14 +4,20 @@
 
 int main(){
     // SETUP //
+    bool runProgram = true;
+
     EnigmaUI::EnigmaWelcome();
     Enigma::EnigmaSettings settings = EnigmaUI::getSettings();
 
     std::string encryptedText = EnigmaUI::getTextToEncrypt();
-    encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
-    std::cout << "Your encrypted message is: \n" << encryptedText << "\n";
-    std::cout << "Type anything then press enter to exit the program\n";
-    std::cin >> encryptedText;
+    while (runProgram){
+        encryptedText = Enigma::EnigmaEncrypt(encryptedText, settings);
+        std::cout << "Your encrypted message is: \n" << encryptedText << "\n";
+        runProgram = EnigmaUI::IsRepeatRequired();
+        if (EnigmaUI::IsSettingsChangeRequired()){
+            settings = EnigmaUI::getSettings();
+        }
+    }
 
     return 0;
 }

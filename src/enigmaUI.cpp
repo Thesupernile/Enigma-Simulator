@@ -290,4 +290,44 @@ namespace EnigmaUI{
 
         return inputText;
     }
+
+    bool IsRepeatRequired(){
+        bool inputValidated = false;
+        std::string userInput;
+
+        while (!inputValidated){
+            std::cout << "Would you like to encrypt another message? Y/N";
+            std::cin >> userInput;
+            userInput = convertToUpper(userInput);
+            if (userInput == "Y"){
+                return true;
+            }
+            else if (userInput == "N"){
+                return false;
+            }
+            else{
+                std::cout << "Input not recognised";
+            }
+        }
+    }
+
+    bool IsSettingsChangeRequired(){
+        bool inputValidated = false;
+        std::string userInput;
+
+        while (!inputValidated){
+            std::cout << "Would you like to change the enigma settings? Y/N";
+            std::cin >> userInput;
+            userInput = convertToUpper(userInput);
+            if (userInput == "Y"){
+                return true;
+            }
+            else if (userInput == "N"){
+                return false;
+            }
+            else{
+                std::cout << "Input not recognised";
+            }
+        }
+    }
 }
