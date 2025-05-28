@@ -18,7 +18,7 @@ int main(){
             settings = EnigmaUI::getSettings();
         }
     }
-
+    
     return 0;
 }
 
